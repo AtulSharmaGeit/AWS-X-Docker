@@ -468,3 +468,129 @@ Platform software is the software that runs the instances in our Elastic Beansta
 
 ![image alt](Docker-29)
 
+**Step - 7 : Delete Our Resources**
+
+Keeping track of our resources, and deleting them at the end, is absolutely a skill that will help us reduce waste in our account.
+
+**Delete our S3 Buckets**
+-    Head to our **S3** console.
+-    Select our S3 bucket, and select **Delete**.
+-    Enter our bucket name, and select **Delete bucket**.
+-    Aha! We need to empty our bucket first. Select **Empty bucket**.
+-    Type `permanently delete` in the text field.
+-    Select **Empty**.
+-    Select our S3 bucket, and select **Delete**.
+-    Enter our bucket name, and select **Delete bucket**.
+
+![image alt](Docker-30)
+
+**Delete our EC2 Instance**
+-    Head back to the **Instances** page of our EC2 console.
+-    Select the checkboxes next to **Instance - NextWork VPC Endpoint**.
+-    Select **Instance state**, then select **Terminate Instance**.
+-    Select **Terminate**.
+
+**Delete our VPCs**
+-    Select **Your VPCs** from our left hand navigation panel.
+-    Select **NextWork-vpc**, then **Actions**, and **Delete VPC**.
+-    Type `delete` in the text box and click **Delete**.
+-    Note: if we get stopped from deleting our VPC because network interfaces are still attached to our VPC - delete all the attached network interfaces first!
+
+Other network components should be automatically deleted with our VPC, but it's always a good idea to check anyway. Don't forget to **refresh** each page before checking if these resources are still in our account:
+1.    Subnets
+2.    Route tables
+3.    Internet gateways
+4.    Network ACLs
+5.    Security groups
+
+**Delete our IAM Access Keys**
+-    Head to our **IAM** console.
+-    Select **Users**.
+-    Select our **Security credentials** tab.
+-    Scroll down to our **Access keys** panel and select the **Actions** drop down.
+-    Select **Delete**.
+-    At the popup panel, select **Deactivate**, and enter our access key ID into the text field.
+-    Select **Delete**.
+-    Last but definitely not least - don't forget to delete the local access key **.csv file** saved on our local computer!
+
+![image alt](Docker-31)
+
+---
+##    Deploy an App Across Accounts
+
+In the real world, teams often **manage multiple AWS accounts** to stay organized and secure. Cross-account deployments makes it easy to move applications or services between these accounts without over-sharing access. It’s such a practical way to keep teams working smoothly while maintaining tight security and control over who can access what.
+
+**Step - 1 : Build our Container Image**
+
+We'll create a simple web app and package it into a Docker image to kick things off.
+
+**Create Dockerfile**
+-    Create a new folder on our desktop called `DockerECR`. We can create DockerECR by running this command in our terminal:
+
+```bash
+cd ~/Desktop
+mkdir DockerECR
+```
+
+This will be our project directory, which means its the local folder for our container image's files.
+
+-    Create a new file called `Dockerfile` inside **DockerECR**. We can do this in our terminal by running the command:
+
+```bash
+cd ~/Desktop/DockerECR
+touch Dockerfile
+```
+
+A **Dockerfile** is a document with all the instructions for creating **our container image**. Once Docker reads our Dockerfile, it can create a container image that contains all the files and software packages that our Dockerfile says it needs.
+
+A container image is a template used to create containers. It contains the application code, libraries, dependencies, and other files needed to run the application. We can make multiple, identical containers from the same image, and all of those containers will run the same way regardless of where it's deployed.
+
+-    Open our **Dockerfile**. We can use any text editor for this e.g. **TextEdit** on Mac or **Notepad++** on Windows.
+-    Add the following lines to your Dockerfile:
+
+```dockerfile
+FROM nginx:latest
+COPY index.html /usr/share/nginx/html/
+```
+
+![image alt](Docker-32)
+
+`FROM nginx:latest` means we’re starting with a pre-built container image called Nginx. It's kind of like we’re reusing a classic recipe (the Nginx image) and adding our own modifications (the rest of your Dockerfile) to customize it for our needs, instead of writing an entirely original recipe from scratch.
+
+`COPY index.html /usr/share/nginx/html/` replaces the default HTML file provided by Nginx with our own custom index.html file, so we're customizing the Nginx server to serve our own web content.
+
+-    Save our work by pressing **Ctrl/Command + S** on our keyboard.
+
+**Create index.html**
+
+Now that we have our Dockerfile ready, Docker can later read our Dockerfile and create a container image with those instructions. One of those instructions is to serve an index.html file we create... let's put together that file now.
+-    **Create index.html**: Create a file named `index.html` in our project directory using this command:
+
+```bash
+touch index.html
+```
+
+-    Open our **index.html** file:
+        -    In our Desktop, open our **DockerECR** folder.
+        -    Right click on index.html.
+        -    Select **Open With >**
+        -    Select our text editor.
+-    Add the following content to index.html:
+
+```html
+<html>
+  <head>
+    <title>Hello {Player B'S NAME}!</title>
+  </head>
+  <body>
+    <h1>Hellloooo from {YOUR NAME} at Nextwork!</h1>
+    <h1>If you can see this, you've deployed my app... nice work!</h1>
+    <h1>You've unlocked my secret code: {SECRET CODE}</h1>
+  </body>
+</html>
+```
+
+-    Make sure to replace `{YOURNAME}` with your actual name, and {Player B'S NAME} with Player B's name.
+-    Here's a challenge for this project! Replace {SECRET CODE} with your favourite food. If you can't decide, enter your favourite movie or song instead.
+-    You CAN'T tell Player B what you've written as your secret code - they can only find out once they've deployed your app successfully!
+-    Check: Have you replaced {Player B'S NAME}, {YOUR NAME} and {SECRET CODE}?
